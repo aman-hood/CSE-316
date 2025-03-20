@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Secure File Management</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
+    <style>
+        body { font-family: Arial, sans-serif; text-align: center; margin-top: 50px; background-color: #f4f4f4; }
+        #auth, #file-section { display: none; margin-top: 20px; }
+        input, button { margin: 5px; padding: 10px; border-radius: 5px; border: none; }
+        button { background-color: #007BFF; color: white; cursor: pointer; transition: 0.3s; }
+        button:hover { background-color: #0056b3; }
+        .file-container { display: flex; justify-content: space-around; margin-top: 20px; }
+        .file-category { width: 30%; background: white; padding: 10px; border-radius: 5px; box-shadow: 0 0 5px rgba(0,0,0,0.1); }
+        .file-category h4 { margin-bottom: 10px; }
+        .container { max-width: 800px; margin: auto; background: white; padding: 20px; border-radius: 10px; box-shadow: 0 0 15px rgba(0,0,0,0.2); }
+        #logout { background-color: #dc3545; }
+        #logout:hover { background-color: #b02a37; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Secure File Management System</h2>
+        
+        <div id="signup">
+            <input type="text" id="newUsername" placeholder="Enter Username">
+            <input type="password" id="newPassword" placeholder="Enter Password">
+            <button onclick="signup()">Signup</button>
+        </div>
+
+        <div id="login" style="display:none;">
+            <input type="text" id="username" placeholder="Enter Username">
+            <input type="password" id="password" placeholder="Enter Password">
+            <button onclick="authenticate()">Login</button>
+        </div>
+        
+        <div id="auth">
+            <h3>Welcome, <span id="userDisplay"></span></h3>
+            <button id="logout" onclick="logout()">Logout</button>
+            <input type="file" id="fileInput" multiple>
+            <button onclick="encryptFiles()">Encrypt & Save</button>
+            <p id="status"></p>
+            <div class="file-container">
+                <div class="file-category">
+                    <h4>Images</h4>
+                    <ul id="imageList"></ul>
+                </div>
+                <div class="file-category">
+                    <h4>Documents</h4>
+                    <ul id="documentList"></ul>
+                </div>
+                <div class="file-category">
+                    <h4>Others</h4>
+                    <ul id="otherList"></ul>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        let users = JSON.parse(localStorage.getItem("users")) || {};
+        let loggedInUser = "";
+        let storedFiles = {};
+
+        function signup() {
+            const username = document.getElementById("newUsername").value;
+            const password = document.getElementById("newPassword").value;
+            if (users[username]) {
+                alert("Username already exists!");
+                return;
+            }
+            users[username] = password;
+            localStorage.setItem("users", JSON.stringify(users));
+            alert("Signup successful! Please login.");
+            document.getElementById("signup").style.display = "none";
+            document.getElementById("login").style.display = "block";
+        }
+
+        function authenticate() {
+            const username = document.getElementById("username").value;
+            const password = document.getElementById("password").value;
+            if (users[username] && users[username] === password) {
+                loggedInUser = username;
+                document.getElementById("login").style.display = "none";
+                document.getElementById("auth").style.display = "block";
+                document.getElementById("userDisplay").innerText = loggedInUser;
+                loadStoredFiles();
+            } else {
+                alert("Incorrect Username or Password!");
+            }
+        }
+
+        function logout() {
+            loggedInUser = "";
+            document.getElementById("auth").style.display = "none";
+            document.getElementById("login").style.display = "block";
+        }
+
+        function encryptFiles() {
+            const files = document.getElementById("fileInput").files;
+            if (files.length === 0) return alert("Select at least one file");
+            if (!storedFiles[loggedInUser]) storedFiles[loggedInUser] = [];
+            
+            Array.from(files).forEach(file => {
+                const reader = new FileReader();
+                reader.onload = function(event) {
+                    const base64String = btoa(event.target.result);
+                    const encrypted = CryptoJS.AES.encrypt(base64String, users[loggedInUser]).toString();
+                    storedFiles[loggedInUser].push({ name: file.name, data: encrypted, type: file.type });
+                    saveStoredFiles();
+                    loadStoredFiles();
+                };
+                reader.readAsBinaryString(file);
+            });
+            document.getElementById("status").innerText = "Files encrypted and stored successfully";
+        }
+
+        function deleteFile(index) {
+            storedFiles[loggedInUser].splice(index, 1);
+            saveStoredFiles();
+            loadStoredFiles();
+        }
+
+        function saveStoredFiles() {
+            localStorage.setItem("storedFiles", JSON.stringify(storedFiles));
+        }
+
+        function loadStoredFiles() {
+            storedFiles = JSON.parse(localStorage.getItem("storedFiles")) || {};
+            document.getElementById("imageList").innerHTML = "";
+            document.getElementById("documentList").innerHTML = "";
+            document.getElementById("otherList").innerHTML = "";
+            
+            if (storedFiles[loggedInUser]) {
+                storedFiles[loggedInUser].forEach((file, index) => {
+                    let li = document.createElement("li");
+                    li.innerHTML = `<span>${file.name}</span> 
+                                    <button onclick="deleteFile(${index})">Delete</button>`;
+                    if (file.type.startsWith("image")) {
+                        document.getElementById("imageList").appendChild(li);
+                    } else if (file.type.includes("pdf") || file.type.includes("document")) {
+                        document.getElementById("documentList").appendChild(li);
+                    } else {
+                        document.getElementById("otherList").appendChild(li);
+                    }
+                });
+            }
+        }
+    </script>
+</body>
+</html>
