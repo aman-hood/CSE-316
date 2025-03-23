@@ -16,6 +16,17 @@ body {
     text-align: center;
 }
 
+@keyframes move {
+    0% { transform: translateX(0); }
+    50% { transform: translateX(100px); }
+    100% { transform: translateX(0); }
+}
+
+h1 {
+    animation: move 3s infinite;
+    color: white;
+}
+
 h2 {
     margin-bottom: 20px;
 }
