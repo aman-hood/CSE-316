@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Secure File Management</title>
+    <link rel="stylesheet" href="css/slideshow.css">
+</head>
+<body>
+
+    <!-- Navbar -->
+    <nav class="navbar">
+        <div class="logo">Secure File Management System</div>
+        <div class="nav-links">
+            <a href="login.php" style="border-style:solid; padding:5px; border-width:0.5px;border-radius:5px;">Login</a>
+
+            <a href="#" style="border-style:solid; padding:5px; border-width:0.5px;border-radius:5px;">Sign up</a>
+        </div>
+    </nav>
+
+    <!-- Slideshow Container -->
+    <div class="slideshow-container">
+
+        <!-- Slide 1: Intro Section -->
+        <div class="slide fade">
+            <div class="intro">
+                <h1>Secure & Manage Your Files</h1>
+                <p>End-to-end encrypted cloud storage with advanced security.</p>
+                <button class="btn">Get Started</button>
+            </div>
+        </div>
+
+        <!-- Slide 2: Login Section -->
+        <div class="slide fade">
+            <div class="login-slide">
+                <h1> <span style="font-size: 80px;">📁</span> Log in & Secure Your Files</h1>
+                <br>
+                <p>Join us and store your files safely with encryption.</p>
+                <br> 
+                <button class="btn">Login Now</button>
+            </div>
+        </div>
+
+        <!-- Slide 3: Features Section -->
+        <div class="slide fade">
+            <div class="features">
+                <h2>Why Choose Us?</h2>
+                <div class="feature-box">
+                    <span>🔒</span> <p>Advanced Encryption</p>
+                </div>
+                <div class="feature-box">
+                    <span>🛡</span> <p>Malware Protection</p>
+                </div>
+                <div class="feature-box">
+                    <span>📲</span> <p>2-Factor Authentication</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Navigation Arrows -->
+        <a class="prev" onclick="changeSlide(-1)">&#10094;</a>
+        <a class="next" onclick="changeSlide(1)">&#10095;</a>
+
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <p>&copy; 2025 Secure File Management. All rights reserved.</p>
+    </footer>
+
+    <script src="script/slideshow.js"></script>
+
+</body>
+</html>
