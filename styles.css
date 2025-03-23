@@ -5,6 +5,9 @@ body {
     justify-content: center;
     align-items: center;
     height: 100vh;
+    flex-direction: column;
+    background: radial-gradient(circle, cyan, blue);
+    height: 100vh;
 }
 
 .container {
