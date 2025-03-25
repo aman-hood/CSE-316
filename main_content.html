@@ -1,51 +1,46 @@
 <!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Secure File Management</title>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
-    <style>
-        body { font-family: Arial, sans-serif; text-align: center; margin-top: 50px; background-color: #f4f4f4; }
-        #file-section { display: none; margin-top: 20px; }
-        input, button { margin: 5px; padding: 10px; border-radius: 5px; border: none; }
-        button { background-color: #007BFF; color: white; cursor: pointer; transition: 0.3s; }
-        button:hover { background-color: #0056b3; }
-        .file-container { display: flex; justify-content: space-around; margin-top: 20px; }
-        .file-category { width: 30%; background: white; padding: 10px; border-radius: 5px; box-shadow: 0 0 5px rgba(0,0,0,0.1); }
-        .file-category h4 { margin-bottom: 10px; }
-        .container { max-width: 800px; margin: auto; background: white; padding: 20px; border-radius: 10px; box-shadow: 0 0 15px rgba(0,0,0,0.2); }
-        #logout { background-color: #dc3545; }
-        #logout:hover { background-color: #b02a37; }
-    </style>
-</head>
-<body>
-    <div class="container">
-        <h2>Secure File Management System</h2>
-        
-        <div id="auth">
-            <h3>Welcome, <span id="userDisplay"></span></h3>
-            <button id="logout" onclick="logout()">Logout</button>
-            <input type="file" id="fileInput" multiple>
-            <button onclick="encryptFiles()">Encrypt & Save</button>
-            <p id="status"></p>
-            <div class="file-container">
-                <div class="file-category">
-                    <h4>Images</h4>
-                    <ul id="imageList"></ul>
-                </div>
-                <div class="file-category">
-                    <h4>Documents</h4>
-                    <ul id="documentList"></ul>
-                </div>
-                <div class="file-category">
-                    <h4>Others</h4>
-                    <ul id="otherList"></ul>
-                </div>
-            </div>
-        </div>
-    </div>
-    
-    <script src="/script/script.js"></script>
-</body>
-</html>
+ <html lang="en">
+ <head>
+     <meta charset="UTF-8">
+     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+     <title>Secure File Management</title>
+     <link rel="stylesheet" href="styles.css">
+ </head>
+ <body>
+     <div class="container">
+         <h2>Secure File Management System</h2>
+ 
+         <!-- Authentication Section -->
+         <div id="auth-section">
+             <div id="signup">
+                 <h3>Sign Up</h3>
+                 <input type="text" id="newUsername" placeholder="Create Username">
+                 <input type="password" id="newPassword" placeholder="Create Password">
+                 <button onclick="signUp()">Sign Up</button>
+                 <p>Already have an account? <a href="#" onclick="showLogin()">Login</a></p>
+             </div>
+ 
+             <div id="login" class="hidden">
+                 <h3>Login</h3>
+                 <input type="text" id="username" placeholder="Enter Username">
+                 <input type="password" id="password" placeholder="Enter Password">
+                 <button onclick="authenticate()">Login</button>
+                 <p>Don't have an account? <a href="#" onclick="showSignup()">Sign Up</a></p>
+             </div>
+         </div>
+ 
+         <!-- File Management Section -->
+         <div id="file-section" class="hidden">
+             <h3>Welcome, <span id="userDisplay"></span></h3>
+             <button id="logout" onclick="logout()">Logout</button>
+             <input type="file" id="fileInput" multiple>
+             <button onclick="encryptFiles()">Encrypt & Save</button>
+             <p id="status"></p>
+             <div id="fileList"></div>
+         </div>
+     </div>
+ 
+     <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
+     <script src="script.js"></script>
+ </body>
+ </html>

@@ -5,9 +5,6 @@ body {
     justify-content: center;
     align-items: center;
     height: 100vh;
-    flex-direction: column;
-    background: radial-gradient(circle, cyan, blue);
-    height: 100vh;
 }
 
 .container {
@@ -17,17 +14,6 @@ body {
     border-radius: 10px;
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
     text-align: center;
-}
-
-@keyframes move {
-    0% { transform: translateX(0); }
-    50% { transform: translateX(100px); }
-    100% { transform: translateX(0); }
-}
-
-h1 {
-    animation: move 3s infinite;
-    color: white;
 }
 
 h2 {
