@@ -81,3 +81,96 @@ button:hover {
 .hidden {
     display: none;
 }
+
+
+.share-btn {
+    background-color: #ffc107;
+    color: black;
+    padding: 5px 10px;
+    border-radius: 5px;
+}
+
+.share-btn:hover {
+    background-color: #e0a800;
+}
+
+.share-options {
+    margin-top: 10px;
+    display: flex;
+    gap: 10px;
+}
+
+.share-icon {
+    text-decoration: none;
+    padding: 5px 10px;
+    border-radius: 5px;
+    color: white;
+    font-size: 14px;
+}
+
+.whatsapp {
+    background-color: #25D366;
+}
+
+.facebook {
+    background-color: #1877F2;
+}
+
+.email {
+    background-color: #D44638;
+}
+
+.share-icon:hover {
+    opacity: 0.8;
+}
+
+/* Add these to your existing styles.css */
+.share-popup {
+    background: white;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 15px;
+    margin-top: 15px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+}
+
+.share-popup h4 {
+    margin-top: 0;
+    color: #333;
+}
+
+.share-buttons {
+    display: flex;
+    gap: 10px;
+    margin: 15px 0;
+    flex-wrap: wrap;
+}
+
+.share-note {
+    font-size: 12px;
+    color: #666;
+    margin-bottom: 0;
+}
+
+.copy-btn {
+    background-color: #6c757d;
+    color: white;
+    border: none;
+    padding: 5px 10px;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.copy-btn:hover {
+    background-color: #5a6268;
+}
+
+#file-info {
+    text-align: center;
+    margin-top: 20px;
+}
+
+#error-message {
+    color: #dc3545;
+    margin-top: 10px;
+}
