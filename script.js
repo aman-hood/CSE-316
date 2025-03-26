@@ -97,6 +97,33 @@ let users = JSON.parse(localStorage.getItem("users")) || {};
      saveStoredFiles();
      loadStoredFiles();
  }
+
+ function shareFile(index) {
+    const file = storedFiles[loggedInUser][index];
+
+    if (!file) {
+        alert("File not found!");
+        return;
+    }
+
+    const encryptedData = encodeURIComponent(file.data);
+    const fileName = encodeURIComponent(file.name);
+    const shareableLink = `${window.location.origin}/share.html?file=${fileName}&data=${encryptedData}`;
+
+    const whatsappLink = `https://wa.me/?text=Download%20file%20${fileName}%20from%20${shareableLink}`;
+    const facebookLink = `https://www.facebook.com/sharer/sharer.php?u=${shareableLink}`;
+    const gmailUrl = `https://mail.google.com/mail/?view=cm&fs=1&tf=1&su=Shared File: ${file.name}&body=Download the file from the link below:\n${shareableLink}`;
+
+    const shareOptions = `
+        <div class="share-options">
+            <p>Share via:</p>
+            <a href="${whatsappLink}" target="_blank" class="share-icon whatsapp">WhatsApp</a>
+            <a href="${facebookLink}" target="_blank" class="share-icon facebook">Facebook</a>
+            <a href="${gmailUrl} target="_blank" class="share-icon email">Email</a>
+        </div>`;
+
+    document.getElementById("fileList").insertAdjacentHTML("beforeend", shareOptions);
+}
  
  function saveStoredFiles() {
      localStorage.setItem("storedFiles", JSON.stringify(storedFiles));
@@ -121,6 +148,7 @@ let users = JSON.parse(localStorage.getItem("users")) || {};
                      <td class="actions">
                          <button class="download-btn" onclick="decryptFile(${index})">⬇</button>
                          <button class="delete-btn" onclick="deleteFile(${index})">❌</button>
+                         <button class="share-btn" onclick="shareFile(${index})">📤</button>
                      </td>
                  </tr>`;
          });
