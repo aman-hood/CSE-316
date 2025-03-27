@@ -1,176 +1,118 @@
+/* General Styling */
 body {
-    font-family: 'Poppins', sans-serif;
-    background-color: #f4f4f4;
+    font-family: Arial, sans-serif;
+    background: linear-gradient(to right, #E3F2FD, #90CAF9); /* Soft blue gradient */
+    color: #333;
+    text-align: center;
+    margin: 0;
+    padding: 0;
     display: flex;
     justify-content: center;
     align-items: center;
     height: 100vh;
 }
 
-.container {
-    width: 400px;
-    background: white;
+/* Glassmorphic Box (Improved) */
+.file-manager-box {
+    width: 60%;
+    background: rgba(255, 255, 255, 0.9);
+    backdrop-filter: blur(12px);
     padding: 20px;
-    border-radius: 10px;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.2);
+    border-radius: 15px;
     text-align: center;
+    animation: fadeIn 0.8s ease-out;
+    max-height: 90vh;
+    overflow-y: auto;
 }
 
-h2 {
-    margin-bottom: 20px;
+/* Header */
+header {
+    background: rgba(255, 255, 255, 0.8);
+    padding: 12px;
+    border-radius: 10px;
+    font-size: 1.5em;
+    font-weight: bold;
+    margin-bottom: 15px;
 }
 
-input, button {
+/* Input Fields & Buttons */
+input, select, button {
     width: 90%;
+    padding: 10px;
     margin: 10px 0;
-    padding: 10px;
+    border: 1px solid #bbb;
     border-radius: 5px;
-    border: 1px solid #ccc;
-}
-
-button {
-    cursor: pointer;
     transition: 0.3s;
-    background-color: #007BFF;
-    color: white;
-}
-
-button:hover {
-    background-color: #0056b3;
-}
-
-#logout {
-    background-color: #dc3545;
-}
-
-#logout:hover {
-    background-color: #b02a37;
-}
-
-.file-table {
-    width: 100%;
-    margin-top: 20px;
-    border-collapse: collapse;
-}
-
-.file-table th, .file-table td {
-    padding: 10px;
-    border-bottom: 1px solid #ddd;
-    text-align: left;
-}
-
-.actions {
-    display: flex;
-    gap: 10px;
-}
-
-.download-btn {
-    background-color: #28a745;
-    color: white;
-    padding: 5px 10px;
-    border-radius: 5px;
-}
-
-.delete-btn {
-    background-color: #dc3545;
-    color: white;
-    padding: 5px 10px;
-    border-radius: 5px;
-}
-
-.hidden {
-    display: none;
-}
-
-
-.share-btn {
-    background-color: #ffc107;
-    color: black;
-    padding: 5px 10px;
-    border-radius: 5px;
-}
-
-.share-btn:hover {
-    background-color: #e0a800;
-}
-
-.share-options {
-    margin-top: 10px;
-    display: flex;
-    gap: 10px;
-}
-
-.share-icon {
-    text-decoration: none;
-    padding: 5px 10px;
-    border-radius: 5px;
-    color: white;
     font-size: 14px;
 }
 
-.whatsapp {
-    background-color: #25D366;
-}
-
-.facebook {
-    background-color: #1877F2;
-}
-
-.email {
-    background-color: #D44638;
-}
-
-.share-icon:hover {
-    opacity: 0.8;
-}
-
-/* Add these to your existing styles.css */
-.share-popup {
-    background: white;
-    border: 1px solid #ddd;
-    border-radius: 8px;
-    padding: 15px;
-    margin-top: 15px;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-}
-
-.share-popup h4 {
-    margin-top: 0;
-    color: #333;
-}
-
-.share-buttons {
-    display: flex;
-    gap: 10px;
-    margin: 15px 0;
-    flex-wrap: wrap;
-}
-
-.share-note {
-    font-size: 12px;
-    color: #666;
-    margin-bottom: 0;
-}
-
-.copy-btn {
-    background-color: #6c757d;
+/* Button Styling */
+button {
+    background: #64B5F6;
     color: white;
     border: none;
-    padding: 5px 10px;
-    border-radius: 5px;
     cursor: pointer;
 }
 
-.copy-btn:hover {
-    background-color: #5a6268;
+button:hover {
+    background: #42A5F5;
+    transform: scale(1.05);
 }
 
-#file-info {
+/* File List Container */
+.file-list-container {
+    width: 100%;
+    padding: 10px;
+    background: rgba(255, 255, 255, 0.95);
+    border-radius: 8px;
+    max-height: 300px;
+    overflow-y: auto;
+}
+
+/* Individual File Items */
+.file-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px;
+    background: rgba(240, 240, 240, 0.9);
+    border-radius: 8px;
+    margin: 5px 0;
+    transition: transform 0.3s ease;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+}
+
+.file-item:hover {
+    transform: scale(1.02);
+}
+
+/* File Actions */
+.file-actions {
+    display: flex;
+    align-items: center;
+}
+
+/* Copy Link Input */
+.copy-link {
+    width: 150px;
+    font-size: 12px;
     text-align: center;
-    margin-top: 20px;
+    margin-right: 5px;
+    padding: 5px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+    background: #fff;
 }
 
-#error-message {
-    color: #dc3545;
-    margin-top: 10px;
+/* ANIMATIONS */
+@keyframes fadeIn {
+    from {
+        transform: scale(0.95);
+        opacity: 0;
+    }
+    to {
+        transform: scale(1);
+        opacity: 1;
+    }
 }

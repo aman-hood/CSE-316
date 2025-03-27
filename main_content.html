@@ -3,25 +3,44 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Secure File Management</title>
+    <title>Secure File Manager</title>
     <link rel="stylesheet" href="styles.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
 </head>
 <body>
-    <div class="container">
-        <h2>Secure File Management System</h2>
 
-        <!-- File Management Section -->
-        <div id="file-section">
-            <h3>Welcome, <span id="userDisplay"></span></h3>
-            <button id="logout" onclick="logout()">Logout</button>
-            <input type="file" id="fileInput" multiple>
-            <button onclick="encryptFiles()">Encrypt & Save</button>
-            <p id="status"></p>
-            <div id="fileList"></div>
+    <div class="file-manager-box animate-box">
+        <header class="animate-fade">
+            <h1 class="animate-scale">📂 Secure File Manager</h1>
+        </header>
+
+        <!-- Folder Creation -->
+        <div class="folder-creation animate-slide-in">
+            <input type="text" id="folderName" placeholder="Folder Name">
+            <input type="password" id="folderPassword" placeholder="Set Password">
+            <button onclick="createFolder()">➕ Create Folder</button>
         </div>
+
+        <!-- Folder Selection -->
+        <div class="folder-selection animate-slide-in">
+            <select id="folderDropdown" onchange="loadFiles()">
+                <option value="">📁 Select Folder</option>
+            </select>
+        </div>
+
+        <!-- File Upload -->
+        <div class="file-upload animate-slide-in">
+            <input type="file" id="fileInput">
+            <button onclick="uploadFile()">📤 Upload File</button>
+        </div>
+
+        <!-- File List -->
+        <div id="fileList" class="animate-slide-in"></div>
+
+        <!-- Messages -->
+        <div id="messages" class="animate-fade"></div>
     </div>
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
     <script src="script.js"></script>
 </body>
 </html>
