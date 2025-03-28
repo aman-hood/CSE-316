@@ -1,159 +1,142 @@
-let users = JSON.parse(localStorage.getItem("users")) || {};
- let loggedInUser = "";
- let storedFiles = JSON.parse(localStorage.getItem("storedFiles")) || {};
- 
- function showSignup() {
-     document.getElementById("signup").classList.remove("hidden");
-     document.getElementById("login").classList.add("hidden");
- }
- 
- function showLogin() {
-     document.getElementById("signup").classList.add("hidden");
-     document.getElementById("login").classList.remove("hidden");
- }
- 
- function signUp() {
-     let newUsername = document.getElementById("newUsername").value.trim();
-     let newPassword = document.getElementById("newPassword").value;
-     
-     if (!newUsername || !newPassword) {
-         alert("Username and password cannot be empty.");
-         return;
-     }
- 
-     if (users[newUsername]) {
-         alert("Username already exists!");
-     } else {
-         users[newUsername] = newPassword;
-         localStorage.setItem("users", JSON.stringify(users));
-         alert("Account created successfully! Please log in.");
-         showLogin();
-     }
- }
- 
- function authenticate() {
-     let username = document.getElementById("username").value.trim();
-     let password = document.getElementById("password").value;
- 
-     if (users[username] && users[username] === password) {
-         loggedInUser = username;
-         document.getElementById("auth-section").classList.add("hidden");
-         document.getElementById("file-section").classList.remove("hidden");
-         document.getElementById("userDisplay").innerText = loggedInUser;
-         loadStoredFiles();
-     } else {
-         alert("Incorrect username or password!");
-     }
- }
- 
- function logout() {
-     loggedInUser = "";
-     document.getElementById("file-section").classList.add("hidden");
-     document.getElementById("auth-section").classList.remove("hidden");
-     document.getElementById("fileList").innerHTML = "";
-     showLogin();
- }
- 
- function encryptFiles() {
-     const files = document.getElementById("fileInput").files;
-     if (files.length === 0) {
-         alert("Select at least one file");
-         return;
-     }
- 
-     if (!storedFiles[loggedInUser]) storedFiles[loggedInUser] = [];
- 
-     Array.from(files).forEach(file => {
-         const reader = new FileReader();
-         reader.onload = function(event) {
-             const base64String = btoa(event.target.result);
-             const encrypted = CryptoJS.AES.encrypt(base64String, users[loggedInUser]).toString();
-             const timestamp = new Date().toLocaleString();
-             storedFiles[loggedInUser].push({ name: file.name, data: encrypted, type: file.type, timestamp });
-             saveStoredFiles();
-             loadStoredFiles();
-         };
-         reader.readAsBinaryString(file);
-     });
- }
- 
- function decryptFile(index) {
-     const file = storedFiles[loggedInUser][index];
-     const decrypted = CryptoJS.AES.decrypt(file.data, users[loggedInUser]).toString(CryptoJS.enc.Utf8);
-     const binaryData = atob(decrypted);
-     const arrayBuffer = new Uint8Array(binaryData.length);
-     for (let i = 0; i < binaryData.length; i++) {
-         arrayBuffer[i] = binaryData.charCodeAt(i);
-     }
-     const blob = new Blob([arrayBuffer], { type: file.type });
-     const a = document.createElement("a");
-     a.href = URL.createObjectURL(blob);
-     a.download = file.name;
-     a.click();
- }
- 
- function deleteFile(index) {
-     storedFiles[loggedInUser].splice(index, 1);
-     saveStoredFiles();
-     loadStoredFiles();
- }
+let folders = {}; // Stores folders & files
 
- function shareFile(index) {
-    const file = storedFiles[loggedInUser][index];
+// Create a new folder
+function createFolder() {
+    let folderName = document.getElementById("folderName").value.trim();
+    let password = document.getElementById("folderPassword").value.trim();
+
+    if (!folderName || !password) {
+        alert("Folder name and password are required!");
+        return;
+    }
+
+    if (folders[folderName]) {
+        alert("Folder already exists!");
+        return;
+    }
+
+    folders[folderName] = { password, files: [] };
+
+    let dropdown = document.getElementById("folderDropdown");
+    let option = document.createElement("option");
+    option.value = folderName;
+    option.textContent = "📂 " + folderName;
+    dropdown.appendChild(option);
+
+    alert(`Folder "${folderName}" created successfully!`);
+}
+
+// Upload a file to the selected folder
+function uploadFile() {
+    let folderName = document.getElementById("folderDropdown").value;
+    let fileInput = document.getElementById("fileInput");
+    let file = fileInput.files[0];
+
+    if (!folderName) {
+        alert("Select a folder first!");
+        return;
+    }
+
+    if (!file) {
+        alert("Choose a file to upload!");
+        return;
+    }
+
+    let reader = new FileReader();
+    reader.onload = function (e) {
+        let fileContent = e.target.result;
+        let password = folders[folderName].password;
+
+        // Encrypt the file content
+        let encryptedContent = CryptoJS.AES.encrypt(fileContent, password).toString();
+
+        let uniqueId = Date.now(); // Unique identifier for sharing
+        folders[folderName].files.push({ id: uniqueId, name: file.name, content: encryptedContent });
+
+        alert(`File "${file.name}" uploaded successfully!`);
+        loadFiles();
+    };
+    reader.readAsDataURL(file);
+}
+
+// Display files in the selected folder
+function loadFiles() {
+    let folderName = document.getElementById("folderDropdown").value;
+    let folder = folders[folderName];
+
+    if (!folder) return;
+
+    let fileList = document.getElementById("fileList");
+    fileList.innerHTML = `<h3>📂 Files in ${folderName}</h3>`;
+
+    folder.files.forEach((file, index) => {
+        let fileItem = document.createElement("div");
+        fileItem.classList.add("file-item");
+        fileItem.innerHTML = `
+            <span>📄 ${file.name}</span>
+            <div class="file-actions">
+                <button onclick="downloadFile('${folderName}', ${index})">🔽 Download</button>
+                <button onclick="deleteFile('${folderName}', ${index})">❌ Delete</button>
+                <input type="text" id="shareLink-${file.id}" value="${generateShareableLink(file.id)}" readonly>
+                <button onclick="copyLink('${file.id}')">📋 Copy Link</button>
+            </div>
+        `;
+        fileList.appendChild(fileItem);
+    });
+}
+
+// Generate a shareable link
+function generateShareableLink(fileId) {
+    return `${window.location.origin}/download?fileId=${fileId}`;
+}
+
+// Copy shareable link
+function copyLink(fileId) {
+    let linkInput = document.getElementById(`shareLink-${fileId}`);
+    linkInput.select();
+    document.execCommand("copy");
+    alert("Shareable link copied!");
+}
+
+// Download a file (decrypts content)
+function downloadFile(folderName, fileIndex) {
+    let folder = folders[folderName];
+    let file = folder.files[fileIndex];
 
     if (!file) {
         alert("File not found!");
         return;
     }
 
-    const encryptedData = encodeURIComponent(file.data);
-    const fileName = encodeURIComponent(file.name);
-    const shareableLink = `${window.location.origin}/share.html?file=${fileName}&data=${encryptedData}`;
+    let password = prompt("Enter folder password to decrypt file:");
+    if (password !== folder.password) {
+        alert("Incorrect password!");
+        return;
+    }
 
-    const whatsappLink = `https://wa.me/?text=Download%20file%20${fileName}%20from%20${shareableLink}`;
-    const facebookLink = `https://www.facebook.com/sharer/sharer.php?u=${shareableLink}`;
-    const gmailUrl = `https://mail.google.com/mail/?view=cm&fs=1&tf=1&su=Shared File: ${file.name}&body=Download the file from the link below:\n${shareableLink}`;
+    let decryptedContent = CryptoJS.AES.decrypt(file.content, password).toString(CryptoJS.enc.Utf8);
 
-    const shareOptions = `
-        <div class="share-options">
-            <p>Share via:</p>
-            <a href="${whatsappLink}" target="_blank" class="share-icon whatsapp">WhatsApp</a>
-            <a href="${facebookLink}" target="_blank" class="share-icon facebook">Facebook</a>
-            <a href="${gmailUrl} target="_blank" class="share-icon email">Email</a>
-        </div>`;
-
-    document.getElementById("fileList").insertAdjacentHTML("beforeend", shareOptions);
+    // Create a download link
+    let link = document.createElement("a");
+    link.href = decryptedContent;
+    link.download = file.name;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
 }
- 
- function saveStoredFiles() {
-     localStorage.setItem("storedFiles", JSON.stringify(storedFiles));
- }
- 
- function loadStoredFiles() {
-     storedFiles = JSON.parse(localStorage.getItem("storedFiles")) || {};
-     let fileTable = `
-         <table class="file-table">
-             <tr>
-                 <th>File Name</th>
-                 <th>Timestamp</th>
-                 <th>Actions</th>
-             </tr>`;
- 
-     if (storedFiles[loggedInUser]) {
-         storedFiles[loggedInUser].forEach((file, index) => {
-             fileTable += `
-                 <tr>
-                     <td>${file.name}</td>
-                     <td>${file.timestamp}</td>
-                     <td class="actions">
-                         <button class="download-btn" onclick="decryptFile(${index})">⬇</button>
-                         <button class="delete-btn" onclick="deleteFile(${index})">❌</button>
-                         <button class="share-btn" onclick="shareFile(${index})">📤</button>
-                     </td>
-                 </tr>`;
-         });
-     }
- 
-     fileTable += `</table>`;
-     document.getElementById("fileList").innerHTML = fileTable;
- }
+
+// Delete a file
+function deleteFile(folderName, fileIndex) {
+    let folder = folders[folderName];
+
+    if (!folder) {
+        alert("Folder not found!");
+        return;
+    }
+
+    let fileName = folder.files[fileIndex].name;
+    folder.files.splice(fileIndex, 1); // Remove file from folder
+
+    alert(`File "${fileName}" deleted successfully!`);
+    loadFiles(); // Refresh file list
+}
